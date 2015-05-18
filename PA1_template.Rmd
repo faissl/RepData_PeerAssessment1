@@ -50,8 +50,6 @@ sumSteps <- fitDataRaw %>%
     summarise(totalSteps=sum(steps)) %>%
     mutate(totalSteps = ifelse(is.na(totalSteps), 0, totalSteps))
 
-summary(sumSteps)
-
 g = ggplot(data=sumSteps, aes(x=totalSteps)) 
 g = g + geom_histogram(breaks=seq(min(sumSteps$totalSteps), 
                                   max(sumSteps$totalSteps), by = 200),
@@ -63,7 +61,6 @@ g
 
 
 ```
-
 
 
 ### What is the average daily activity pattern?
@@ -78,10 +75,6 @@ g
 meanIntSteps <- fitDataRaw %>%
     group_by(interval) %>%
     summarise(meanSteps=mean(steps, na.rm=TRUE)) 
-
-
-str(meanIntSteps)
-summary(meanIntSteps)
 
 g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line()
 g = g + xlab("Interval") + ylab("Average Interval Steps") + ggtitle("FitBit Interval Mean Steps")
@@ -103,20 +96,12 @@ adjFitData <- fitDataRaw %>%
     transform(steps = ifelse(is.na(steps), mean(steps, na.rm=TRUE), steps)) %>%
     mutate(day = weekdays(date)) %>%
     mutate(dayType = ifelse(day == "Saturday" | day == "Sunday", "weekend", "weekday"))
-              
-summary(adjFitData)
-head(adjFitData)
-unique(adjFitData$day)
 
 # Create a new data frame with summary counts of the total daily steps. Convert NAs to zero 
 # for plotting. 
-
 sumSteps <- adjFitData %>%
     group_by(date) %>%
     summarise(totalSteps=sum(steps))
-
-summary(sumSteps)
-head(sumSteps)
 
 g = ggplot(data=sumSteps, aes(x=totalSteps)) 
 g = g + geom_histogram(breaks=seq(min(sumSteps$totalSteps), 
@@ -130,9 +115,6 @@ g
 ```
 
 
-
-
-
 ### Are there differences in activity patterns between weekdays and weekends?
 
 ```{r, fig.height= 10, fig.width=12}
@@ -140,8 +122,6 @@ g
 meanIntSteps <- adjFitData %>%
     group_by(dayType, interval) %>%
     summarise(meanSteps=mean(steps, na.rm=TRUE)) 
-
-str(meanIntSteps)
 
 g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line() 
 g = g + facet_wrap(~ dayType, ncol=1)
