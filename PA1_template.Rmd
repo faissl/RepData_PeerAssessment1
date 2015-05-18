@@ -83,7 +83,6 @@ meanIntSteps <- fitDataRaw %>%
 str(meanIntSteps)
 summary(meanIntSteps)
 
-```{r echo=FALSE}
 g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line()
 g = g + xlab("Interval") + ylab("Average Interval Steps") + ggtitle("FitBit Interval Mean Steps")
 g = g + geom_hline(aes(yintercept=mean(meanIntSteps$meanSteps), color="red", linetype="dashed"))
@@ -136,9 +135,15 @@ g
 
 ### Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+```{r, fig.height= 10, fig.width=12}
 
-g = ggplot(data=adjFitData, aes(x = interval, y = steps)) + geom_line() 
+meanIntSteps <- adjFitData %>%
+    group_by(dayType, interval) %>%
+    summarise(meanSteps=mean(steps, na.rm=TRUE)) 
+
+str(meanIntSteps)
+
+g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line() 
 g = g + facet_wrap(~ dayType, ncol=1)
 g = g + xlab("Interval") + ylab("Average Interval Steps") + ggtitle("FitBit Interval Mean Steps")
 g
