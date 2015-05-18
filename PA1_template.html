@@ -107,15 +107,7 @@ sumSteps &lt;- fitDataRaw %&gt;%
     summarise(totalSteps=sum(steps)) %&gt;%
     mutate(totalSteps = ifelse(is.na(totalSteps), 0, totalSteps))
 
-summary(sumSteps)</code></pre>
-<pre><code>##       date              totalSteps   
-##  Min.   :2012-10-01   Min.   :    0  
-##  1st Qu.:2012-10-16   1st Qu.: 6778  
-##  Median :2012-10-31   Median :10395  
-##  Mean   :2012-10-31   Mean   : 9354  
-##  3rd Qu.:2012-11-15   3rd Qu.:12811  
-##  Max.   :2012-11-30   Max.   :21194</code></pre>
-<pre class="r"><code>g = ggplot(data=sumSteps, aes(x=totalSteps)) 
+g = ggplot(data=sumSteps, aes(x=totalSteps)) 
 g = g + geom_histogram(breaks=seq(min(sumSteps$totalSteps), 
                                   max(sumSteps$totalSteps), by = 200),
                        col=&quot;gray&quot;, fill = &quot;green&quot;, alpha = .4)
@@ -136,21 +128,7 @@ meanIntSteps &lt;- fitDataRaw %&gt;%
     group_by(interval) %&gt;%
     summarise(meanSteps=mean(steps, na.rm=TRUE)) 
 
-
-str(meanIntSteps)</code></pre>
-<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    288 obs. of  2 variables:
-##  $ interval : int  0 5 10 15 20 25 30 35 40 45 ...
-##  $ meanSteps: num  1.717 0.3396 0.1321 0.1509 0.0755 ...
-##  - attr(*, &quot;drop&quot;)= logi TRUE</code></pre>
-<pre class="r"><code>summary(meanIntSteps)</code></pre>
-<pre><code>##     interval        meanSteps      
-##  Min.   :   0.0   Min.   :  0.000  
-##  1st Qu.: 588.8   1st Qu.:  2.486  
-##  Median :1177.5   Median : 34.113  
-##  Mean   :1177.5   Mean   : 37.383  
-##  3rd Qu.:1766.2   3rd Qu.: 52.835  
-##  Max.   :2355.0   Max.   :206.170</code></pre>
-<pre class="r"><code>g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line()
+g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line()
 g = g + xlab(&quot;Interval&quot;) + ylab(&quot;Average Interval Steps&quot;) + ggtitle(&quot;FitBit Interval Mean Steps&quot;)
 g = g + geom_hline(aes(yintercept=mean(meanIntSteps$meanSteps), color=&quot;red&quot;, linetype=&quot;dashed&quot;))
 g = g + geom_hline(aes(yintercept=median(meanIntSteps$meanSteps), color=&quot;blue&quot;, linetype=&quot;solid&quot;))
@@ -166,59 +144,14 @@ adjFitData &lt;- fitDataRaw %&gt;%
     transform(steps = ifelse(is.na(steps), mean(steps, na.rm=TRUE), steps)) %&gt;%
     mutate(day = weekdays(date)) %&gt;%
     mutate(dayType = ifelse(day == &quot;Saturday&quot; | day == &quot;Sunday&quot;, &quot;weekend&quot;, &quot;weekday&quot;))
-              
-summary(adjFitData)</code></pre>
-<pre><code>##      steps             date               interval          day           
-##  Min.   :  0.00   Min.   :2012-10-01   Min.   :   0.0   Length:17568      
-##  1st Qu.:  0.00   1st Qu.:2012-10-16   1st Qu.: 588.8   Class :character  
-##  Median :  0.00   Median :2012-10-31   Median :1177.5   Mode  :character  
-##  Mean   : 37.38   Mean   :2012-10-31   Mean   :1177.5                     
-##  3rd Qu.: 37.38   3rd Qu.:2012-11-15   3rd Qu.:1766.2                     
-##  Max.   :806.00   Max.   :2012-11-30   Max.   :2355.0                     
-##    dayType         
-##  Length:17568      
-##  Class :character  
-##  Mode  :character  
-##                    
-##                    
-## </code></pre>
-<pre class="r"><code>head(adjFitData)</code></pre>
-<pre><code>##     steps       date interval    day dayType
-## 1 37.3826 2012-10-01        0 Monday weekday
-## 2 37.3826 2012-10-01        5 Monday weekday
-## 3 37.3826 2012-10-01       10 Monday weekday
-## 4 37.3826 2012-10-01       15 Monday weekday
-## 5 37.3826 2012-10-01       20 Monday weekday
-## 6 37.3826 2012-10-01       25 Monday weekday</code></pre>
-<pre class="r"><code>unique(adjFitData$day)</code></pre>
-<pre><code>## [1] &quot;Monday&quot;    &quot;Tuesday&quot;   &quot;Wednesday&quot; &quot;Thursday&quot;  &quot;Friday&quot;    &quot;Saturday&quot; 
-## [7] &quot;Sunday&quot;</code></pre>
-<pre class="r"><code># Create a new data frame with summary counts of the total daily steps. Convert NAs to zero 
-# for plotting. 
 
+# Create a new data frame with summary counts of the total daily steps. Convert NAs to zero 
+# for plotting. 
 sumSteps &lt;- adjFitData %&gt;%
     group_by(date) %&gt;%
     summarise(totalSteps=sum(steps))
 
-summary(sumSteps)</code></pre>
-<pre><code>##       date              totalSteps   
-##  Min.   :2012-10-01   Min.   :   41  
-##  1st Qu.:2012-10-16   1st Qu.: 9819  
-##  Median :2012-10-31   Median :10766  
-##  Mean   :2012-10-31   Mean   :10766  
-##  3rd Qu.:2012-11-15   3rd Qu.:12811  
-##  Max.   :2012-11-30   Max.   :21194</code></pre>
-<pre class="r"><code>head(sumSteps)</code></pre>
-<pre><code>## Source: local data frame [6 x 2]
-## 
-##         date totalSteps
-## 1 2012-10-01   10766.19
-## 2 2012-10-02     126.00
-## 3 2012-10-03   11352.00
-## 4 2012-10-04   12116.00
-## 5 2012-10-05   13294.00
-## 6 2012-10-06   15420.00</code></pre>
-<pre class="r"><code>g = ggplot(data=sumSteps, aes(x=totalSteps)) 
+g = ggplot(data=sumSteps, aes(x=totalSteps)) 
 g = g + geom_histogram(breaks=seq(min(sumSteps$totalSteps), 
                                   max(sumSteps$totalSteps), by = 200),
                        col=&quot;gray&quot;, fill = &quot;green&quot;, alpha = .4)
@@ -234,15 +167,7 @@ g </code></pre>
     group_by(dayType, interval) %&gt;%
     summarise(meanSteps=mean(steps, na.rm=TRUE)) 
 
-str(meanIntSteps)</code></pre>
-<pre><code>## Classes 'grouped_df', 'tbl_df', 'tbl' and 'data.frame':  576 obs. of  3 variables:
-##  $ dayType  : chr  &quot;weekday&quot; &quot;weekday&quot; &quot;weekday&quot; &quot;weekday&quot; ...
-##  $ interval : int  0 5 10 15 20 25 30 35 40 45 ...
-##  $ meanSteps: num  7.01 5.38 5.14 5.16 5.07 ...
-##  - attr(*, &quot;vars&quot;)=List of 1
-##   ..$ : symbol dayType
-##  - attr(*, &quot;drop&quot;)= logi TRUE</code></pre>
-<pre class="r"><code>g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line() 
+g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line() 
 g = g + facet_wrap(~ dayType, ncol=1)
 g = g + xlab(&quot;Interval&quot;) + ylab(&quot;Average Interval Steps&quot;) + ggtitle(&quot;FitBit Interval Mean Steps&quot;)
 g</code></pre>
