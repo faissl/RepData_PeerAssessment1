@@ -20,7 +20,7 @@ packages(ggplot2); packages(dplyr); packages(xtable); packages(knitr)
 
 
 ```r
-opts_chunk$set(scipen=10)
+options(scipen=999)
 ```
 
 
@@ -71,16 +71,13 @@ sumSteps <- fitDataRaw %>%
     summarise(totalSteps=sum(steps)) %>%
     mutate(totalSteps = ifelse(is.na(totalSteps), 0, totalSteps))
 
-meanSteps = as.integer(mean(sumSteps$totalSteps))
-medianSteps = as.integer(median(sumSteps$totalSteps))
-
 g = ggplot(data=sumSteps, aes(x=totalSteps)) 
 g = g + geom_histogram(breaks=seq(min(sumSteps$totalSteps), 
                                   max(sumSteps$totalSteps), by = 200),
                        col="gray", fill = "green", alpha = .4)
 g = g + ylab("Count") + xlab("Total Daily Steps") + ggtitle("Aggregated Total Daily Steps")  
-g = g + geom_vline(aes(xintercept=meanSteps, color="red", linetype="dashed"))
-g = g + geom_vline(aes(xintercept=medianSteps, color="blue", linetype="solid"))
+g = g + geom_vline(aes(xintercept=mean(sumSteps$totalSteps), color="red", linetype="dashed"))
+g = g + geom_vline(aes(xintercept=median(sumSteps$totalSteps), color="blue", linetype="solid"))
 g 
 ```
 
@@ -88,7 +85,7 @@ g
 
 The NA data was converted to zeroes so that the number of days with no data in these data is highlighted. 
 
-Examining the data, it is apparent that these data are left skewed, hence the mean, 9354, is to the left of the median of 10395. These data were collected over two months. It is unlikely that there are 10 days of absolutely no steps, possibly indicating the Fitbit was faulty or not worn or turned off for the day. 
+Examining the data, it is apparent that these data are left skewed, hence the mean, 9354.2295082, is to the left of the median of 10395. These data were collected over two months. It is unlikely that there are 10 days of absolutely no steps, possibly indicating the Fitbit was faulty or not worn or turned off for the day. 
 
 ### What is the average daily activity pattern?
 
@@ -103,6 +100,10 @@ meanIntSteps <- fitDataRaw %>%
     group_by(interval) %>%
     summarise(meanSteps=mean(steps, na.rm=TRUE)) 
 
+# Max average mean daily interval
+maxAvgSteps = meanIntSteps$meanSteps[which.max(meanIntSteps$meanSteps)]
+maxAvgStepInterval = meanIntSteps$interval[which.max(meanIntSteps$meanSteps)]
+
 g = ggplot(data=meanIntSteps, aes(x = interval, y = meanSteps)) + geom_line()
 g = g + xlab("Interval") + ylab("Average Interval Steps") + ggtitle("FitBit Interval Mean Steps")
 g = g + geom_hline(aes(yintercept=mean(meanIntSteps$meanSteps), color="red", linetype="dashed"))
@@ -112,14 +113,15 @@ g
 
 ![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
+The time series of daily average steps per interval demonstrates a peak of activity in the early part of the day, with an average number of 206 at time interval 835. Activity evens out throughout rest of day and is low during hours when a particpant sleeps. 
+
 
 ### Inputing missing values
-
-In this step, the missing data will be converted to the average steps for a given interval. 
 
 
 ```r
 # Transform data frame by filling in the missing interval data with average interval data. 
+# Compute the weekend/weekday data in preparation of next section. 
 
 adjFitData <- fitDataRaw %>%
     group_by(date) %>%
@@ -133,9 +135,6 @@ sumSteps <- adjFitData %>%
     group_by(date) %>%
     summarise(totalSteps=sum(steps))
 
-meanSteps = as.integer(mean(sumSteps$totalSteps))
-medianSteps = as.integer(median(sumSteps$totalSteps))
-
 g = ggplot(data=sumSteps, aes(x=totalSteps)) 
 g = g + geom_histogram(breaks=seq(min(sumSteps$totalSteps), 
                        max(sumSteps$totalSteps), by = 200),
@@ -148,7 +147,8 @@ g
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
-Adjusting the data to consider the missing data, the mean, 10766, align with the median of 10766 and the data is not skewed. The mean has obviously increased a fair amount. It does not seem very likely for the mean and median to align so perfectly, so in future analysis, it would be advantageous to investigate more sophisticated methods to handle missing data. 
+The missing data was converted to the average steps for a given interval across all days. 
+When these missing data are considered, the mean, 10766, align with the median of 10766 and the data is not skewed. The mean has obviously increased a fair amount. It does not seem very likely for the mean and median to align so perfectly, so it's advisable in future analysis to investigate more sophisticated methods to process missing data. 
 
 
 ### Are there differences in activity patterns between weekdays and weekends?
@@ -167,3 +167,4 @@ g
 
 ![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
+The time series of average steps per interval for the weekend versus for weekdays displays some interesting differences between the fitness participant's exercise behavior. These data demonstrate that on weekdays, there is a peak in activity early in the day, followed by significantly less activity midday, and slightly more in the evening. On the weekend, exercise begins later in the morning and stays relatively consistent throughout the day. 
