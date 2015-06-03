@@ -30,7 +30,7 @@ options(scipen=999)
 fitDataRaw <- read.csv("activity.csv", stringsAsFactors = FALSE, sep="," )
 fitDataRaw$date <- as.Date(fitDataRaw$date)  # Convert the character date to Date type
 
-naCount <- length(which(is.na(fitDataRaw$steps)))
+naCount <- sum(is.na(fitDataRaw$steps))
 
 str(fitDataRaw)
 ```
@@ -57,7 +57,7 @@ summary(fitDataRaw)
 ##  NA's   :2304
 ```
 
-Examining the data, it is apparent that there is a lot of NA data. There are a total of 17568 records. Of these, there are naCount records with no step data.
+Examining the data, it is apparent that there is a lot of NA data. There are a total of 17,568 records. Of these, there are 2,304 records with no step data.
 
 ### What is mean total number of steps taken per day?
 
@@ -85,7 +85,7 @@ g
 
 The NA data was converted to zeroes so that the number of days with no data in these data is highlighted. 
 
-Examining the data, it is apparent that these data are left skewed, hence the mean, 9354.2295082, is to the left of the median of 10395. These data were collected over two months. It is unlikely that there are 10 days of absolutely no steps, possibly indicating the Fitbit was faulty or not worn or turned off for the day. 
+Examining the data, it is apparent that these data are left skewed, hence the mean, 9,354.2, is to the left of the median of 10,395. These data were collected over two months. It is unlikely that there are 10 days of absolutely no steps, possibly indicating the Fitbit was faulty or not worn or turned off for the day. 
 
 ### What is the average daily activity pattern?
 
@@ -148,7 +148,7 @@ g
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
 The missing data was converted to the average steps for a given interval across all days. 
-When these missing data are considered, the mean, 10766, align with the median of 10766 and the data is not skewed. The mean has obviously increased a fair amount. It does not seem very likely for the mean and median to align so perfectly, so it's advisable in future analysis to investigate more sophisticated methods to process missing data. 
+When these missing data are considered, the mean, 10,766, align with the median of 10,766 and the data is not skewed. The mean has obviously increased a fair amount. It does not seem very likely for the mean and median to align so perfectly, so it's advisable in future analysis to investigate more sophisticated methods to process missing data. 
 
 
 ### Are there differences in activity patterns between weekdays and weekends?
